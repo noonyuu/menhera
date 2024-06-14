@@ -51,8 +51,8 @@ func Jwt() (string, error){
 
 		// JWTを構成する
 		tok, err := jwt.NewBuilder().
-			Subject(os.Getenv("CHID")).
-			Issuer(os.Getenv("CHID")).
+			Subject(os.Getenv("CLIENT_ID")).
+			Issuer(os.Getenv("CLIENT_ID")).
 			Audience(aud).
 			Expiration(time.Now().Add(30 * time.Minute)).	// 有効期限を30分に設定
 			Build()
@@ -62,7 +62,7 @@ func Jwt() (string, error){
 		}
 
 		// token_expプロパティはメソッドが用意されてないので、.Setで追加。
-		tok.Set("token_exp", 60*60*24*30) // token_expプロパティ、チャネルアクセストークンの有効期間を指定
+		tok.Set("token_exp", 60*60) // token_expプロパティ、チャネルアクセストークンの有効期間を指定
 
 		// JWTを発行する
 		signed, err := jwt.Sign(tok, jwt.WithKey(jwa.RS256, privkey)) // signedにJWTがエンコードされ代入される
@@ -101,8 +101,17 @@ func Jwt() (string, error){
 		if err != nil {
 			log.Fatal(err)
 		}
+		bytes, err := json.Marshal(foo)
+		fmt.Println("🏷 JWT")
+		fmt.Println(string(signed)) // JWTの確認
 
-		fmt.Println("チャネルアクセストークン")
+
+
+		fmt.Println("🎁チャネルアクセストークンを含むペイロード")
+		fmt.Println(string(bytes))
+
+		fmt.Println("🔑チャネルアクセストークン")
+		fmt.Println(foo.Token)
 		return foo.Token, nil
 	}
 }
