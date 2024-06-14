@@ -37,15 +37,21 @@ func GeminiAI(apiKey string) (*genai.GenerativeModel, error) {
 func QuestionAI(que string) (linebot.TextMessage, error) {
 	c := context.Background()
 	//モデル取得
-	aiModel := models
+	if models == nil {
+		return linebot.TextMessage{
+			Text: "モデルが初期化されていません",
+		}, fmt.Errorf("models is not initialized")
+	}
 
 	var message linebot.TextMessage
 	//生成
 	query := "あなたは重度のメンヘラです。\n" + que + "\nこのメッセージに日本語を使用して50文字以内で返答してください" // ここで文字列を正しく結合
-	var response, err = aiModel.GenerateContent(c, genai.Text(query))
+	var response, err = models.GenerateContent(c, genai.Text(query))
 	if err != nil {
 		log.Println(err)
-		return linebot.TextMessage{}, err
+		return linebot.TextMessage{
+			Text: "エラーが発生しました",
+		}, err
 	}
 	ans := printResponse(response)
 
