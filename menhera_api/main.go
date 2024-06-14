@@ -21,6 +21,7 @@ func loadEnv() {
 
 func main() {
 	loadEnv()
+	GeminiInit()
 	server := gin.Default()
 
 	var bot *linebot.Client
